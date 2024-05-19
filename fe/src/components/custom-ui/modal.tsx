@@ -1,4 +1,4 @@
-import {MouseEventHandler} from 'react'
+import {MouseEventHandler} from 'react';
 
 
 interface ModalProps extends Readonly<{children: React.ReactNode}> {
@@ -21,5 +21,5 @@ export default function Modal(props: ModalProps) {
         { props.children }
       </div>
     </section>
-  )
+  );
 }

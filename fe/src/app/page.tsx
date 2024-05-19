@@ -1,9 +1,66 @@
-import Image from "next/image";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
+import {Button} from '@/components/ui/button'
 
 export default function Home() {
   return (
-    <main>
-
+    <main className="max-w-7xl bg-white w-screen h-screen flex items-center justify-center">
+      <section className="flex flex-col w-[1080px] bg-slate-400 p-8 rounded-3xl cursor-default">
+        <section className="self-end mb-4">
+          <Button><span className="material-symbols-outlined">add</span> Add Book</Button>
+        </section>
+        <Table className="bg-slate-200 rounded-xl">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8">No</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Year of Publication</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>1</TableCell>
+              <TableCell>The Pragmatic Programmer</TableCell>
+              <TableCell>1999</TableCell>
+              <TableCell>
+                <Button size="icon" variant="destructive">
+                  <span className="material-symbols-outlined">delete</span>
+                </Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>2</TableCell>
+              <TableCell>The Clean Coder</TableCell>
+              <TableCell>2011</TableCell>
+              <TableCell>
+                <Button size="icon" variant="destructive">
+                  <span className="material-symbols-outlined">delete</span>
+                </Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>3</TableCell>
+              <TableCell>Alex Ferguson: My Autobiography</TableCell>
+              <TableCell>2013</TableCell>
+              <TableCell>
+                <Button size="icon" variant="destructive">
+                  <span className="material-symbols-outlined">delete</span>
+                </Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>4</TableCell>
+              <TableCell>Alderamin on the Sky</TableCell>
+              <TableCell>2012</TableCell>
+              <TableCell>
+                <Button size="icon" variant="destructive">
+                  <span className="material-symbols-outlined">delete</span>
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </section>
     </main>
-  );
+  )
 }
