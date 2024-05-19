@@ -1,0 +1,10 @@
+version: "2"
+sql:
+  - schema: "../db/postgresql/factory/"
+    queries: "../db/postgresql/query/"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "reposqlc"
+        out: "../pkg/reposqlc"
+        sql_package: "pgx/v5"
