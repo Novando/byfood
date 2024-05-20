@@ -1,3 +1,9 @@
+-- name: BookCount :one
+SELECT COUNT(*) FROM books
+WHERE
+    title ILIKE '%'||sqlc.arg(title)::text||'%' AND
+    yop = @yop::smallint;
+
 -- name: BookCreate :exec
 INSERT INTO books(title, yop, author, isbn, page)
 VALUES (@title::text, @yop::smallint, @author::text, @isbn, @page);

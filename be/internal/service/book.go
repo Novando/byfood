@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/novando/byfood/be/internal/dto"
 	"github.com/novando/byfood/be/pkg/reposqlc"
@@ -58,6 +59,39 @@ func (s *Book) Update(bookId string, params dto.BookCreateRequest) error {
 		Page:   pgtype.Int4{Int32: int32(page), Valid: params.Page != nil},
 		Isbn:   pgtype.Text{String: isbn, Valid: params.Isbn != nil},
 	})
+}
+
+func (s *Book) Read(params dto.BookRequest) (res []dto.BookResponse, total int64, err error) {
+	colName := reposqlc.BOOKS_CREATED_AT
+	if params.SortBy == reposqlc.BOOKS_TITLE {
+		colName = reposqlc.BOOKS_TITLE
+	}
+	if params.SortBy == reposqlc.BOOKS_YOP {
+		colName = reposqlc.BOOKS_YOP
+	}
+	xtraParams := reposqlc.ColumnCustomParams{
+		ColumnName: colName,
+		Ascending:  params.Asc,
+		Limit:      params.Size,
+		Offset:     params.Page - 1,
+	}
+	total, err = s.repo.BookCount(context.Background(), reposqlc.BookCountParams{Title: params.Title, Yop: params.Yop})
+	if err != nil {
+		return
+	}
+	dao, err := s.repo.BookGetAll(context.Background(), xtraParams, reposqlc.BookGetAllParams{Title: params.Title, Yop: params.Yop})
+	if err != nil {
+		return
+	}
+	for _, item := range dao {
+		res = append(res, dto.BookResponse{
+			ID:     fmt.Sprintf("%x", item.ID.Bytes),
+			Title:  item.Title,
+			Yop:    item.Yop,
+			Author: item.Author,
+		})
+	}
+	return
 }
 
 func (s *Book) Delete(bookId string) error {

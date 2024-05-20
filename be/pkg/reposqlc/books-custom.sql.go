@@ -8,7 +8,7 @@ import (
 const bookGetAll = `-- name: BookGetAll :many
 SELECT id, title, yop, author, isbn, page, created_at, updated_at, deleted_at FROM books
 WHERE
-    title = $1::text AND
+    title ILIKE '%'||$1::text||'%' AND
     yop = $2::smallint
 `
 

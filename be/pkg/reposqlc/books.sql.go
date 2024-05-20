@@ -11,6 +11,25 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const bookCount = `-- name: BookCount :one
+SELECT COUNT(*) FROM books
+WHERE
+    title ILIKE '%'||$1::text||'%' AND
+    yop = $2::smallint
+`
+
+type BookCountParams struct {
+	Title string
+	Yop   int16
+}
+
+func (q *Queries) BookCount(ctx context.Context, arg BookCountParams) (int64, error) {
+	row := q.db.QueryRow(ctx, bookCount, arg.Title, arg.Yop)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const bookCreate = `-- name: BookCreate :exec
 INSERT INTO books(title, yop, author, isbn, page)
 VALUES ($1::text, $2::smallint, $3::text, $4, $5)

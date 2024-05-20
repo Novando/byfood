@@ -39,6 +39,33 @@ func (c *Book) Create(ctx *fiber.Ctx) error {
 	})
 }
 
+func (c *Book) Read(ctx *fiber.Ctx) error {
+	var query dto.BookRequest
+	if err := ctx.QueryParser(&query); err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(response.StdResponse{
+			Message: "UNABLE_FETCH_REGISTER_REQUEST",
+		})
+	}
+	if query.Page < 1 {
+		query.Page = 1
+	}
+	if query.Size < 10 {
+		query.Size = 10
+	}
+	res, total, err := c.bookService.Read(query)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Data:    err.Error(),
+			Message: "BOOK_FETCH_FAILED",
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(response.StdResponse{
+		Message: "BOOK_FETCHED",
+		Data:    res,
+		Count:   total,
+	})
+}
+
 func (c *Book) Update(ctx *fiber.Ctx) error {
 	bookId := ctx.Params("id", "")
 	if bookId == "" {
