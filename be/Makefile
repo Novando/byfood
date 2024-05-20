@@ -8,10 +8,10 @@ generate:
 	cd config && sqlc generate
 
 migrate:
-	sql-migrate up -config ./config/sql-migrate.yml -env local
+	sql-migrate up -config ./config/sql-migrate.yml -env default
 
 unmigrate-1:
-	sql-migrate down -config ./config/sql-migrate.yml -env server -limit 1
+	sql-migrate down -config ./config/sql-migrate.yml -env default -limit 1
 
 run:
 	go run ./cmd/main.go

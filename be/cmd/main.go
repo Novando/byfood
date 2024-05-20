@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"github.com/novando/byfood/be/pkg/postgresql"
@@ -40,9 +41,6 @@ func main() {
 		AppName: os.Getenv("APP_NAME"),
 	})
 	app.Use(cors.New())
-	userService.Init(app, query)
-	ppdbService.Init(app, query, pgxpool)
-	mediaService.Init(app, query)
 	if err := app.Listen(":" + os.Getenv("APP_PORT")); err != nil {
 		fmt.Println(err.Error())
 	}

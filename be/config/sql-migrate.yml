@@ -1,4 +1,4 @@
 default:
   dialect: postgres
-  datasource: dbname={DB_NAME} sslmode=disable user={DB_PASS} password={DB_PASS}
-  dir: ./db/postgresql/migration
+  datasource: dbname=${DB_NAME} sslmode=disable user=${DB_USER} password=${DB_PASS}
+  dir: ./db/pg/migration
