@@ -7,38 +7,71 @@ package reposqlc
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const booksGetAll = `-- name: BooksGetAll :many
-SELECT id, title, yop, author, isbn, pages, created_at, updated_at, deleted_at FROM books
+const bookCreate = `-- name: BookCreate :exec
+INSERT INTO books(title, yop, author, isbn, page)
+VALUES ($1::text, $2::smallint, $3::text, $4::text, $5::int)
 `
 
-func (q *Queries) BooksGetAll(ctx context.Context) ([]Book, error) {
-	rows, err := q.db.Query(ctx, booksGetAll)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Book
-	for rows.Next() {
-		var i Book
-		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.Yop,
-			&i.Author,
-			&i.Isbn,
-			&i.Pages,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.DeletedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+type BookCreateParams struct {
+	Title  string
+	Yop    int16
+	Author string
+	Isbn   string
+	Page   int32
+}
+
+func (q *Queries) BookCreate(ctx context.Context, arg BookCreateParams) error {
+	_, err := q.db.Exec(ctx, bookCreate,
+		arg.Title,
+		arg.Yop,
+		arg.Author,
+		arg.Isbn,
+		arg.Page,
+	)
+	return err
+}
+
+const bookDeleteById = `-- name: BookDeleteById :exec
+UPDATE books SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1::uuid
+`
+
+func (q *Queries) BookDeleteById(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, bookDeleteById, id)
+	return err
+}
+
+const bookUpdateById = `-- name: BookUpdateById :exec
+UPDATE books SET
+    title = $1::text,
+    yop = $2::smallint,
+    author = $3::text,
+    isbn = $4::text,
+    page = $5::int,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = $6::uuid
+`
+
+type BookUpdateByIdParams struct {
+	Title  string
+	Yop    int16
+	Author string
+	Isbn   string
+	Page   int32
+	ID     pgtype.UUID
+}
+
+func (q *Queries) BookUpdateById(ctx context.Context, arg BookUpdateByIdParams) error {
+	_, err := q.db.Exec(ctx, bookUpdateById,
+		arg.Title,
+		arg.Yop,
+		arg.Author,
+		arg.Isbn,
+		arg.Page,
+		arg.ID,
+	)
+	return err
 }

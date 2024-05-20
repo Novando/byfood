@@ -14,7 +14,7 @@ type Book struct {
 	Yop       int16
 	Author    string
 	Isbn      pgtype.Text
-	Pages     pgtype.Int4
+	Page      pgtype.Int4
 	CreatedAt pgtype.Timestamptz
 	UpdatedAt pgtype.Timestamptz
 	DeletedAt pgtype.Timestamptz
