@@ -13,15 +13,15 @@ import (
 
 const bookCreate = `-- name: BookCreate :exec
 INSERT INTO books(title, yop, author, isbn, page)
-VALUES ($1::text, $2::smallint, $3::text, $4::text, $5::int)
+VALUES ($1::text, $2::smallint, $3::text, $4, $5)
 `
 
 type BookCreateParams struct {
 	Title  string
 	Yop    int16
 	Author string
-	Isbn   string
-	Page   int32
+	Isbn   pgtype.Text
+	Page   pgtype.Int4
 }
 
 func (q *Queries) BookCreate(ctx context.Context, arg BookCreateParams) error {
@@ -49,8 +49,8 @@ UPDATE books SET
     title = $1::text,
     yop = $2::smallint,
     author = $3::text,
-    isbn = $4::text,
-    page = $5::int,
+    isbn = $4,
+    page = $5,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = $6::uuid
 `
@@ -59,8 +59,8 @@ type BookUpdateByIdParams struct {
 	Title  string
 	Yop    int16
 	Author string
-	Isbn   string
-	Page   int32
+	Isbn   pgtype.Text
+	Page   pgtype.Int4
 	ID     pgtype.UUID
 }
 
