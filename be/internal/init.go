@@ -20,4 +20,7 @@ func Init(app *fiber.App, db *reposqlc.Queries) {
 	book.Get("/:id", cb.Detail)
 	book.Get("/", cb.Read)
 	book.Post("/", cb.Create)
+
+	v1.Post("/url-cleanup", controller.ProcessUrl)
+
 }
