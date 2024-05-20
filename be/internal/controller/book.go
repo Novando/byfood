@@ -39,6 +39,35 @@ func (c *Book) Create(ctx *fiber.Ctx) error {
 	})
 }
 
+func (c *Book) Update(ctx *fiber.Ctx) error {
+	bookId := ctx.Params("id", "")
+	if bookId == "" {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Message: "BOOK_ID_REQUIRED",
+		})
+	}
+	var payload dto.BookCreateRequest
+	if err := ctx.BodyParser(&payload); err != nil {
+		return err
+	}
+	if err := validator.Validate(payload); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Message: "VALIDATION_ERROR",
+			Data:    err.Error(),
+		})
+	}
+	err := c.bookService.Update(bookId, payload)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Data:    err.Error(),
+			Message: "BOOK_UPDATE_FAILED",
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(response.StdResponse{
+		Message: "BOOK_UPDATED",
+	})
+}
+
 func (c *Book) Delete(ctx *fiber.Ctx) error {
 	bookId := ctx.Params("id", "")
 	if bookId == "" {

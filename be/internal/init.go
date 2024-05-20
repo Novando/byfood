@@ -16,5 +16,6 @@ func Init(app *fiber.App, db *reposqlc.Queries) {
 
 	book := v1.Group("/books")
 	book.Delete("/:id", cb.Delete)
+	book.Put("/:id", cb.Update)
 	book.Post("/", cb.Create)
 }
