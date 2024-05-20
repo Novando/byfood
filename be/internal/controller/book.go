@@ -38,3 +38,22 @@ func (c *Book) Create(ctx *fiber.Ctx) error {
 		Message: "BOOK_CREATED",
 	})
 }
+
+func (c *Book) Delete(ctx *fiber.Ctx) error {
+	bookId := ctx.Params("id", "")
+	if bookId == "" {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Message: "BOOK_ID_REQUIRED",
+		})
+	}
+	err := c.bookService.Delete(bookId)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Data:    err.Error(),
+			Message: "BOOK_DELETION_FAILED",
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(response.StdResponse{
+		Message: "BOOK_DELETED",
+	})
+}

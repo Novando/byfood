@@ -5,6 +5,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/novando/byfood/be/internal/dto"
 	"github.com/novando/byfood/be/pkg/reposqlc"
+	"github.com/novando/byfood/be/pkg/uuid"
+	"strings"
 )
 
 type Book struct {
@@ -31,4 +33,14 @@ func (s *Book) Create(params dto.BookCreateRequest) error {
 		Page:   pgtype.Int4{Int32: int32(page), Valid: params.Page != nil},
 		Isbn:   pgtype.Text{String: isbn, Valid: params.Isbn != nil},
 	})
+}
+
+func (s *Book) Delete(bookId string) error {
+	bookByte, err := uuid.ParseUUID(bookId)
+	if err != nil {
+		return err
+	}
+	idNoDash := strings.ReplaceAll(bookId, "-", "")
+	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: strings.Contains(idNoDash, "0000000000000000000000000000")}
+	return s.repo.BookDeleteById(context.Background(), bookUuid)
 }
