@@ -94,6 +94,29 @@ func (s *Book) Read(params dto.BookRequest) (res []dto.BookResponse, total int64
 	return
 }
 
+func (s *Book) Detail(bookId string) (res dto.BookDetailResponse, err error) {
+	bookByte, err := uuid.ParseUUID(bookId)
+	if err != nil {
+		return
+	}
+	idNoDash := strings.ReplaceAll(bookId, "-", "")
+	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: strings.Contains(idNoDash, "0000000000000000000000000000")}
+	dao, err := s.repo.BookDetailById(context.Background(), bookUuid)
+	if err != nil {
+		return
+	}
+	res = dto.BookDetailResponse{
+		Title:     dao.Title,
+		Author:    dao.Author,
+		Yop:       dao.Yop,
+		Isbn:      dao.Isbn.String,
+		Page:      int(dao.Page.Int32),
+		CreatedAt: dao.CreatedAt.Time,
+		UpdatedAt: dao.UpdatedAt.Time,
+	}
+	return
+}
+
 func (s *Book) Delete(bookId string) error {
 	bookByte, err := uuid.ParseUUID(bookId)
 	if err != nil {

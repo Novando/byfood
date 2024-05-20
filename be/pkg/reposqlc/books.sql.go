@@ -63,6 +63,27 @@ func (q *Queries) BookDeleteById(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const bookDetailById = `-- name: BookDetailById :one
+SELECT id, title, yop, author, isbn, page, created_at, updated_at, deleted_at FROM books WHERE id = $1::uuid
+`
+
+func (q *Queries) BookDetailById(ctx context.Context, id pgtype.UUID) (Book, error) {
+	row := q.db.QueryRow(ctx, bookDetailById, id)
+	var i Book
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Yop,
+		&i.Author,
+		&i.Isbn,
+		&i.Page,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const bookUpdateById = `-- name: BookUpdateById :exec
 UPDATE books SET
     title = $1::text,

@@ -18,5 +18,8 @@ UPDATE books SET
     updated_at = CURRENT_TIMESTAMP
 WHERE id = @id::uuid;
 
+-- name: BookDetailById :one
+SELECT * FROM books WHERE id = @id::uuid;
+
 -- name: BookDeleteById :exec
 UPDATE books SET deleted_at = CURRENT_TIMESTAMP WHERE id = @id::uuid;

@@ -95,6 +95,26 @@ func (c *Book) Update(ctx *fiber.Ctx) error {
 	})
 }
 
+func (c *Book) Detail(ctx *fiber.Ctx) error {
+	bookId := ctx.Params("id", "")
+	if bookId == "" {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Message: "BOOK_ID_REQUIRED",
+		})
+	}
+	res, err := c.bookService.Detail(bookId)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Data:    err.Error(),
+			Message: "BOOK_DETAIL_FETCH_FAILED",
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(response.StdResponse{
+		Message: "BOOK_DETAIL_FETCHED",
+		Data:    res,
+	})
+}
+
 func (c *Book) Delete(ctx *fiber.Ctx) error {
 	bookId := ctx.Params("id", "")
 	if bookId == "" {
