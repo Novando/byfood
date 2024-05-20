@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
+	"github.com/novando/byfood/be/internal"
 	"github.com/novando/byfood/be/pkg/postgresql"
 	"os"
 	"strconv"
@@ -41,6 +42,8 @@ func main() {
 		AppName: os.Getenv("APP_NAME"),
 	})
 	app.Use(cors.New())
+	internal.Init(app, query)
+
 	if err := app.Listen(":" + os.Getenv("APP_PORT")); err != nil {
 		fmt.Println(err.Error())
 	}
