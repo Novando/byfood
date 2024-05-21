@@ -79,7 +79,7 @@ func (s *Book) Read(params dto.BookRequest) (res []dto.BookResponse, total int64
 	if err != nil {
 		return
 	}
-	dao, err := s.repo.BookGetAll(context.Background(), xtraParams, reposqlc.BookGetAllParams{Title: params.Title, Yop: params.Yop})
+	dao, err := s.repo.BookGetAll(context.Background(), xtraParams, params.Title)
 	if err != nil {
 		return
 	}
@@ -100,7 +100,7 @@ func (s *Book) Detail(bookId string) (res dto.BookDetailResponse, err error) {
 		return
 	}
 	idNoDash := strings.ReplaceAll(bookId, "-", "")
-	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: strings.Contains(idNoDash, "0000000000000000000000000000")}
+	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: !strings.Contains(idNoDash, "0000000000000000000000000000")}
 	dao, err := s.repo.BookDetailById(context.Background(), bookUuid)
 	if err != nil {
 		return

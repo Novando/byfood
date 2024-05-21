@@ -4,14 +4,26 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/swagger"
 	"github.com/joho/godotenv"
 	"github.com/novando/byfood/be/internal/library"
 	urlModifier "github.com/novando/byfood/be/internal/url-modifier"
 	"github.com/novando/byfood/be/pkg/postgresql"
 	"os"
 	"strconv"
+
+	_ "github.com/novando/byfood/be/docs"
 )
 
+// @title Byfood Assignment Test
+// @version 1.0
+// @description A collection of book API along with URL Modifier API
+// @contact.name Rizky Novando Priyadi
+// @contact.email rizkynovando@gmail.com
+// @license.name GNU General Public License v3.00
+// @license.url https://www.gnu.org/licenses/gpl-3.0.en.html
+// @host localhost:3000
+// @BasePath /v1
 func main() {
 	// Init environment variable
 	envPath := fmt.Sprint("./config/.env.local")
@@ -44,8 +56,9 @@ func main() {
 	})
 	app.Use(cors.New())
 	v1 := app.Group("/v1")
+	v1.Get("/swagger/*", swagger.HandlerDefault)
 	library.Init(v1, query)
-	urlModifier.Init(v1, query)
+	urlModifier.Init(v1)
 
 	if err := app.Listen(":" + os.Getenv("APP_PORT")); err != nil {
 		fmt.Println(err.Error())

@@ -8,6 +8,15 @@ import (
 	"github.com/novando/byfood/be/pkg/validator"
 )
 
+// ProcessUrl godoc
+// @Summary      Modify provided URL with certain operation
+// @Tags         URL Modify
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  dto.CleanupResponse
+// @Failure      400  {object}  response.StdResponse
+// @Failure      404  {string}  "Not Found"
+// @Router       /url-modifier [post]
 func ProcessUrl(ctx *fiber.Ctx) error {
 	var payload dto.CleanupRequest
 	if err := ctx.BodyParser(&payload); err != nil {

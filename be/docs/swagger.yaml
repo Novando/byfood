@@ -1,0 +1,157 @@
+basePath: /v1
+definitions:
+  dto.CleanupResponse:
+    properties:
+      processed_url:
+        type: string
+    type: object
+  response.StdResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: rizkynovando@gmail.com
+    name: Rizky Novando Priyadi
+  description: A collection of book API along with URL Modifier API
+  license:
+    name: GNU General Public License v3.00
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  title: Byfood Assignment Test
+  version: "1.0"
+paths:
+  /books:
+    post:
+      parameters:
+      - description: title of a book
+        in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get summary data of a book with pagination
+      tags:
+      - Books
+  /books/:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CleanupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Modify provided URL with certain operation
+      tags:
+      - Books
+  /books/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Soft delete a book by an ID
+      tags:
+      - Books
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get detailed data about a book
+      tags:
+      - Books
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update whole data of a book
+      tags:
+      - Books
+  /url-modifier:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CleanupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.StdResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Modify provided URL with certain operation
+      tags:
+      - URL Modify
+swagger: "2.0"

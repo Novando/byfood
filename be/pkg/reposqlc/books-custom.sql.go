@@ -8,19 +8,13 @@ import (
 const bookGetAll = `-- name: BookGetAll :many
 SELECT id, title, yop, author, isbn, page, created_at, updated_at, deleted_at FROM books
 WHERE
-    title ILIKE '%'||$1::text||'%' AND
-    yop = $2::smallint
+    title ILIKE '%'||$1::text||'%'
 `
-
-type BookGetAllParams struct {
-	Title string
-	Yop   int16
-}
 
 func (q *Queries) BookGetAll(
 	ctx context.Context,
 	xtra ColumnCustomParams,
-	arg BookGetAllParams,
+	title string,
 ) ([]Book, error) {
 	sorter := DESC
 	if xtra.Ascending {
@@ -34,7 +28,7 @@ func (q *Queries) BookGetAll(
 		xtra.Limit,
 		xtra.Offset,
 	)
-	rows, err := q.db.Query(ctx, query, arg.Title, arg.Yop)
+	rows, err := q.db.Query(ctx, query, title)
 	if err != nil {
 		return nil, err
 	}

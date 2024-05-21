@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/novando/byfood/be/internal/library/dto"
 	"github.com/novando/byfood/be/internal/library/service"
 	"github.com/novando/byfood/be/pkg/response"
 	"github.com/novando/byfood/be/pkg/validator"
+	"strconv"
 )
 
 type Book struct {
@@ -16,16 +18,43 @@ func NewBookController(sb *service.Book) *Book {
 	return &Book{sb}
 }
 
+// Create godoc
+// @Summary      Modify provided URL with certain operation
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  dto.CleanupResponse
+// @Failure      400  {object}  response.StdResponse
+// @Failure      404  {string}  "Not Found"
+// @Router       /books/ [post]
 func (c *Book) Create(ctx *fiber.Ctx) error {
 	var payload dto.BookCreateRequest
 	if err := ctx.BodyParser(&payload); err != nil {
-		return err
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Message: "REQUEST_ERROR",
+			Data:    err.Error(),
+		})
 	}
 	if err := validator.Validate(payload); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
 			Message: "VALIDATION_ERROR",
 			Data:    err.Error(),
 		})
+	}
+	if payload.Isbn != nil {
+		err := fmt.Errorf("ISBN Should contain numeric with 10 or 13 characters long")
+		if len(*payload.Isbn) == 10 || len(*payload.Isbn) == 13 {
+			err = nil
+		}
+		if _, err = strconv.Atoi(*payload.Isbn); err != nil {
+			err = fmt.Errorf("ISBN should be numeric")
+		}
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+				Message: "VALIDATION_ERROR",
+				Data:    err.Error(),
+			})
+		}
 	}
 	err := c.bookService.Create(payload)
 	if err != nil {
@@ -39,6 +68,15 @@ func (c *Book) Create(ctx *fiber.Ctx) error {
 	})
 }
 
+// Read godoc
+// @Summary     Get summary data of a book with pagination
+// @Tags        Books
+// @Produce     json
+// @Param		title	query	string	false	"title of a book"
+// @Success     200  {object}  response.StdResponse
+// @Failure     400  {object}  response.StdResponse
+// @Failure     404  {string}  "Not Found"
+// @Router      /books [post]
 func (c *Book) Read(ctx *fiber.Ctx) error {
 	var query dto.BookRequest
 	if err := ctx.QueryParser(&query); err != nil {
@@ -66,6 +104,16 @@ func (c *Book) Read(ctx *fiber.Ctx) error {
 	})
 }
 
+// Update godoc
+// @Summary     Update whole data of a book
+// @Tags        Books
+// @Accept      json
+// @Produce     json
+// @Param		id	path	uuid	true	"Book ID"
+// @Success     200  {object}  response.StdResponse
+// @Failure     400  {object}  response.StdResponse
+// @Failure     404  {string}  "Not Found"
+// @Router      /books/{id} [put]
 func (c *Book) Update(ctx *fiber.Ctx) error {
 	bookId := ctx.Params("id", "")
 	if bookId == "" {
@@ -75,7 +123,10 @@ func (c *Book) Update(ctx *fiber.Ctx) error {
 	}
 	var payload dto.BookCreateRequest
 	if err := ctx.BodyParser(&payload); err != nil {
-		return err
+		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
+			Message: "REQUEST_ERROR",
+			Data:    err.Error(),
+		})
 	}
 	if err := validator.Validate(payload); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(response.StdResponse{
@@ -95,6 +146,15 @@ func (c *Book) Update(ctx *fiber.Ctx) error {
 	})
 }
 
+// Detail godoc
+// @Summary     Get detailed data about a book
+// @Tags        Books
+// @Produce     json
+// @Param		id	path	uuid	true	"Book ID"
+// @Success     200  {object}  response.StdResponse
+// @Failure     400  {object}  response.StdResponse
+// @Failure     404  {string}  "Not Found"
+// @Router      /books/{id} [get]
 func (c *Book) Detail(ctx *fiber.Ctx) error {
 	bookId := ctx.Params("id", "")
 	if bookId == "" {
@@ -115,6 +175,15 @@ func (c *Book) Detail(ctx *fiber.Ctx) error {
 	})
 }
 
+// Delete godoc
+// @Summary     Soft delete a book by an ID
+// @Tags        Books
+// @Produce     json
+// @Param		id	path	uuid	true	"Book ID"
+// @Success     200  {object}  response.StdResponse
+// @Failure     400  {object}  response.StdResponse
+// @Failure     404  {string}  "Not Found"
+// @Router      /books/{id} [delete]
 func (c *Book) Delete(ctx *fiber.Ctx) error {
 	bookId := ctx.Params("id", "")
 	if bookId == "" {
