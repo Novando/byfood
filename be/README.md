@@ -9,7 +9,7 @@
 
 ## How to Run
 - Create a PostgresSQL database
-- Duplicate `./config/.env.example` named `./config/.env.local`, fill the value of the variable accordingly
+- Duplicate `./config/.env.example` named `./config/.env.local`, fill the value of the variable accordingly (the recommended port is 3000)
 - Install the project simply by executing :
 ```bash
 make install
@@ -33,6 +33,7 @@ make run
 make build
 ./bin/byfood
 ```
+- To open up API Docs, you could visit the Swagger on `/v1/swagger`.
 
 
 ## Project Structure
