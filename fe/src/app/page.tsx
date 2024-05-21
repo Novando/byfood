@@ -3,9 +3,10 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/c
 import {Button} from '@/components/ui/button'
 import Modal from '@/components/custom-ui/modal'
 import {useEffect, useState} from 'react'
-import {useRouter} from 'next/navigation'
+import {useRouter, useSearchParams} from 'next/navigation'
 import {toastError, toastSuccess} from '@/components/custom-ui/notification'
 import {delData, getData} from '@/lib/fetch'
+import {DataTableFooter, DataTableFooterData} from '@/components/custom-ui/table'
 
 type BookType = {
   id: string
@@ -15,18 +16,27 @@ type BookType = {
 }
 
 export default function Home() {
-  const [selectDelete, setSelectDelete] = useState<undefined|string>()
+  const searchParams = useSearchParams()
+  const [selectedBook, setSelectedBook] = useState<undefined|BookType>()
   const [books, setBooks] = useState<BookType[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [footerData, setFooterData] = useState<DataTableFooterData>({
+    size: 10,
+    page: 1,
+    total: 10,
+  })
   const router = useRouter()
 
   useEffect(() => {
     getBooks()
   }, [])
 
-  const getBooks = async () => {
+  const getBooks = async (params = searchParams.toString()) => {
     try {
-      const res = await getData(`${process.env.apiUrl}/books`)
+      const res = await getData(`${process.env.apiUrl}/books?${params}`)
+      setFooterData((prev) => {
+        return {...prev, total: res.count}
+      })
       setBooks(res.data || [])
     } catch (err) {
       toastError(err)
@@ -36,11 +46,11 @@ export default function Home() {
   const deleteBook = async () => {
     setIsLoading(true)
     try {
-      await delData(`${process.env.apiUrl}/books/${selectDelete}`)
+      await delData(`${process.env.apiUrl}/books/${selectedBook?.id}`)
       const res = await getData(`${process.env.apiUrl}/books`)
       setBooks(res.data)
-      toastSuccess({}, "Book deleted!")
-      setSelectDelete(undefined)
+      toastSuccess({}, "Book Deleted!", `${selectedBook?.title} deleted from the library`)
+      setSelectedBook(undefined)
     } catch (err) {
       toastError(err)
     } finally {
@@ -66,11 +76,11 @@ export default function Home() {
           <TableBody>
             {books.map((item, key) =>
               <TableRow key={item.id}>
-                <TableCell>{key + 1}</TableCell>
+                <TableCell>{(footerData.size * (footerData.page - 1)) + (key + 1)}</TableCell>
                 <TableCell onClick={() => router.push(`/${item.id}`)} className="text-sky-700">{item.title}</TableCell>
                 <TableCell>{item.yop}</TableCell>
                 <TableCell>
-                  <Button onClick={() => setSelectDelete(item.id)} size="icon" variant="destructive">
+                  <Button onClick={() => setSelectedBook(item)} size="icon" variant="destructive">
                     <span className="material-symbols-outlined">delete</span>
                   </Button>
                 </TableCell>
@@ -78,16 +88,17 @@ export default function Home() {
             )}
           </TableBody>
         </Table>
+        <DataTableFooter footerData={footerData} setFooterData={setFooterData} setPageData={getBooks} />
       </section>
-      {selectDelete &&
+      {selectedBook &&
         <Modal
-          closeModal={() => setSelectDelete(undefined)}
+          closeModal={() => setSelectedBook(undefined)}
           title="Confirm Delete"
         >
           <section>
-            <p>Are you sure want to delete BOOKSNAME from the library?</p>
+            <p>Are you sure want to delete <span className="font-medium">{selectedBook.title}</span> from the library?</p>
             <section className="flex items-center justify-center gap-8">
-              <Button onClick={() => setSelectDelete(undefined)} variant="secondary">No, nevermind</Button>
+              <Button onClick={() => setSelectedBook(undefined)} variant="secondary">No, nevermind</Button>
               <Button onClick={deleteBook} disabled={isLoading} variant="destructive">Yes, delete it</Button>
             </section>
           </section>

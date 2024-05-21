@@ -36,6 +36,11 @@ export default function NewBook() {
           doc.value = val
         }
       }
+      form.setValue('title', res.data.title)
+      form.setValue('yop', res.data.yop.toString())
+      form.setValue('author', res.data.author)
+      form.setValue('isbn', res.data.isbn)
+      form.setValue('page', res.data.page.toString())
     } catch (err) {
       toastError(err)
     }
