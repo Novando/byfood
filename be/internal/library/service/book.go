@@ -73,9 +73,9 @@ func (s *Book) Read(params dto.BookRequest) (res []dto.BookResponse, total int64
 		ColumnName: colName,
 		Ascending:  params.Asc,
 		Limit:      params.Size,
-		Offset:     params.Page - 1,
+		Offset:     (params.Page - 1) * params.Size,
 	}
-	total, err = s.repo.BookCount(context.Background(), reposqlc.BookCountParams{Title: params.Title, Yop: params.Yop})
+	total, err = s.repo.BookCount(context.Background(), params.Title)
 	if err != nil {
 		return
 	}
@@ -123,6 +123,6 @@ func (s *Book) Delete(bookId string) error {
 		return err
 	}
 	idNoDash := strings.ReplaceAll(bookId, "-", "")
-	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: strings.Contains(idNoDash, "0000000000000000000000000000")}
+	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: !strings.Contains(idNoDash, "0000000000000000000000000000")}
 	return s.repo.BookDeleteById(context.Background(), bookUuid)
 }

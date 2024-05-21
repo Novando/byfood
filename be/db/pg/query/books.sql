@@ -2,7 +2,7 @@
 SELECT COUNT(*) FROM books
 WHERE
     title ILIKE '%'||sqlc.arg(title)::text||'%' AND
-    yop = @yop::smallint;
+    deleted_at IS NULL;
 
 -- name: BookCreate :exec
 INSERT INTO books(title, yop, author, isbn, page)

@@ -8,7 +8,8 @@ import (
 const bookGetAll = `-- name: BookGetAll :many
 SELECT id, title, yop, author, isbn, page, created_at, updated_at, deleted_at FROM books
 WHERE
-    title ILIKE '%'||$1::text||'%'
+    title ILIKE '%'||$1::text||'%' AND
+	deleted_at IS NULL
 `
 
 func (q *Queries) BookGetAll(

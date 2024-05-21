@@ -15,16 +15,11 @@ const bookCount = `-- name: BookCount :one
 SELECT COUNT(*) FROM books
 WHERE
     title ILIKE '%'||$1::text||'%' AND
-    yop = $2::smallint
+    deleted_at IS NULL
 `
 
-type BookCountParams struct {
-	Title string
-	Yop   int16
-}
-
-func (q *Queries) BookCount(ctx context.Context, arg BookCountParams) (int64, error) {
-	row := q.db.QueryRow(ctx, bookCount, arg.Title, arg.Yop)
+func (q *Queries) BookCount(ctx context.Context, title string) (int64, error) {
+	row := q.db.QueryRow(ctx, bookCount, title)
 	var count int64
 	err := row.Scan(&count)
 	return count, err

@@ -4,8 +4,8 @@ import {Button} from '@/components/ui/button'
 import Modal from '@/components/custom-ui/modal'
 import {useEffect, useState} from 'react'
 import {useRouter} from 'next/navigation'
-import {toastError} from '@/components/custom-ui/notification'
-import {getData} from '@/lib/fetch'
+import {toastError, toastSuccess} from '@/components/custom-ui/notification'
+import {delData, getData} from '@/lib/fetch'
 
 type BookType = {
   id: string
@@ -17,6 +17,7 @@ type BookType = {
 export default function Home() {
   const [selectDelete, setSelectDelete] = useState<undefined|string>()
   const [books, setBooks] = useState<BookType[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -29,6 +30,21 @@ export default function Home() {
       setBooks(res.data || [])
     } catch (err) {
       toastError(err)
+    }
+  }
+
+  const deleteBook = async () => {
+    setIsLoading(true)
+    try {
+      await delData(`${process.env.apiUrl}/books/${selectDelete}`)
+      const res = await getData(`${process.env.apiUrl}/books`)
+      setBooks(res.data)
+      toastSuccess({}, "Book deleted!")
+      setSelectDelete(undefined)
+    } catch (err) {
+      toastError(err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -51,10 +67,10 @@ export default function Home() {
             {books.map((item, key) =>
               <TableRow key={item.id}>
                 <TableCell>{key + 1}</TableCell>
-                <TableCell onClick={() => router.push(`/${item.id}`)}>{item.title}</TableCell>
+                <TableCell onClick={() => router.push(`/${item.id}`)} className="text-sky-700">{item.title}</TableCell>
                 <TableCell>{item.yop}</TableCell>
                 <TableCell>
-                  <Button size="icon" variant="destructive">
+                  <Button onClick={() => setSelectDelete(item.id)} size="icon" variant="destructive">
                     <span className="material-symbols-outlined">delete</span>
                   </Button>
                 </TableCell>
@@ -72,7 +88,7 @@ export default function Home() {
             <p>Are you sure want to delete BOOKSNAME from the library?</p>
             <section className="flex items-center justify-center gap-8">
               <Button onClick={() => setSelectDelete(undefined)} variant="secondary">No, nevermind</Button>
-              <Button variant="destructive">Yes, delete it</Button>
+              <Button onClick={deleteBook} disabled={isLoading} variant="destructive">Yes, delete it</Button>
             </section>
           </section>
         </Modal>
