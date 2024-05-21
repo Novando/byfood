@@ -2,8 +2,8 @@ package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/novando/byfood/be/internal/dto"
-	"github.com/novando/byfood/be/internal/service"
+	"github.com/novando/byfood/be/internal/library/dto"
+	"github.com/novando/byfood/be/internal/library/service"
 	"github.com/novando/byfood/be/pkg/response"
 	"github.com/novando/byfood/be/pkg/validator"
 )

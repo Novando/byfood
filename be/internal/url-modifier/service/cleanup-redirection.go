@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	"github.com/novando/byfood/be/internal/dto"
+	"github.com/novando/byfood/be/internal/url-modifier/dto"
 	"strings"
 )
 

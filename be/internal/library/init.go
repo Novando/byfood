@@ -1,26 +1,22 @@
-package internal
+package library
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/novando/byfood/be/internal/controller"
-	"github.com/novando/byfood/be/internal/service"
+	"github.com/novando/byfood/be/internal/library/controller"
+	"github.com/novando/byfood/be/internal/library/service"
 	"github.com/novando/byfood/be/pkg/reposqlc"
 )
 
-func Init(app *fiber.App, db *reposqlc.Queries) {
-	v1 := app.Group("/v1")
+func Init(r fiber.Router, db *reposqlc.Queries) {
 
 	sb := service.NewBookService(db)
 
 	cb := controller.NewBookController(sb)
 
-	book := v1.Group("/books")
+	book := r.Group("/books")
 	book.Delete("/:id", cb.Delete)
 	book.Put("/:id", cb.Update)
 	book.Get("/:id", cb.Detail)
 	book.Get("/", cb.Read)
 	book.Post("/", cb.Create)
-
-	v1.Post("/url-cleanup", controller.ProcessUrl)
-
 }

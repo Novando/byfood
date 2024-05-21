@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/novando/byfood/be/internal/dto"
+	"github.com/novando/byfood/be/internal/library/dto"
 	"github.com/novando/byfood/be/pkg/reposqlc"
 	"github.com/novando/byfood/be/pkg/uuid"
 	"strings"
