@@ -1,12 +1,20 @@
+'use client'
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
 import {Button} from '@/components/ui/button'
+import Modal from '@/components/custom-ui/modal'
+import {useState} from 'react'
+import {useRouter} from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
+
+  const [selectDelete, setSelectDelete] = useState<undefined|string>()
+
   return (
     <main className="max-w-7xl bg-white w-screen h-screen flex items-center justify-center">
       <section className="flex flex-col w-[1080px] bg-slate-400 p-8 rounded-3xl cursor-default">
         <section className="self-end mb-4">
-          <Button><span className="material-symbols-outlined">add</span> Add Book</Button>
+          <Button onClick={() => router.push("/new-book")}><span className="material-symbols-outlined">add</span> Add Book</Button>
         </section>
         <Table className="bg-slate-200 rounded-xl">
           <TableHeader>
@@ -61,6 +69,20 @@ export default function Home() {
           </TableBody>
         </Table>
       </section>
+      {selectDelete &&
+        <Modal
+          closeModal={() => setSelectDelete(undefined)}
+          title="Confirm Delete"
+        >
+          <section>
+            <p>Are you sure want to delete BOOKSNAME from the library?</p>
+            <section className="flex items-center justify-center gap-8">
+              <Button onClick={() => setSelectDelete(undefined)} variant="secondary">No, nevermind</Button>
+              <Button variant="destructive">Yes, delete it</Button>
+            </section>
+          </section>
+        </Modal>
+      }
     </main>
   )
 }
