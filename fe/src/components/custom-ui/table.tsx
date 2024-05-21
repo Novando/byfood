@@ -63,10 +63,10 @@ export function DataTableFooter(props: DataTableFooterGetter & DataTableFooterSe
       {props.footerData.total > 0 &&
         <section className="flex items-center justify-between mx-10 mt-4">
           <p className="text-neutral-500 text-sm">
-            Menampilkan { (props.footerData.page - 1) * props.footerData.size + 1 } sampai { props.footerData.total < (props.footerData.page * props.footerData.size) ? props.footerData.total : props.footerData.page * props.footerData.size } dari {props.footerData.total} data
+            showing { (props.footerData.page - 1) * props.footerData.size + 1 } till { props.footerData.total < (props.footerData.page * props.footerData.size) ? props.footerData.total : props.footerData.page * props.footerData.size }, total {props.footerData.total} data
           </p>
           <div className="flex items-center gap-4">
-            <p>Data per halaman</p>
+            <p>Data size</p>
             <Select onValueChange={(e: string) => appendQueryString('size', e)}>
               <SelectTrigger className="w-20">
                 <SelectValue placeholder={props.footerData.size} />

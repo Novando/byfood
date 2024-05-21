@@ -2,7 +2,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
 import {Button} from '@/components/ui/button'
 import Modal from '@/components/custom-ui/modal'
-import {useEffect, useState} from 'react'
+import {Suspense, useEffect, useState} from 'react'
 import {useRouter, useSearchParams} from 'next/navigation'
 import {toastError, toastSuccess} from '@/components/custom-ui/notification'
 import {delData, getData} from '@/lib/fetch'
@@ -15,7 +15,7 @@ type BookType = {
   author: string
 }
 
-export default function Home() {
+function TheComponent() {
   const searchParams = useSearchParams()
   const [selectedBook, setSelectedBook] = useState<undefined|BookType>()
   const [books, setBooks] = useState<BookType[]>([])
@@ -105,5 +105,13 @@ export default function Home() {
         </Modal>
       }
     </main>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <TheComponent />
+    </Suspense>
   )
 }
