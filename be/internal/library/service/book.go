@@ -42,7 +42,7 @@ func (s *Book) Update(bookId string, params dto.BookCreateRequest) error {
 		return err
 	}
 	idNoDash := strings.ReplaceAll(bookId, "-", "")
-	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: strings.Contains(idNoDash, "0000000000000000000000000000")}
+	bookUuid := pgtype.UUID{Bytes: bookByte, Valid: !strings.Contains(idNoDash, "0000000000000000000000000000")}
 	page := 0
 	if params.Page != nil {
 		page = *params.Page
