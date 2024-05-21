@@ -2,16 +2,38 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
 import {Button} from '@/components/ui/button'
 import Modal from '@/components/custom-ui/modal'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useRouter} from 'next/navigation'
+import {toastError} from '@/components/custom-ui/notification'
+import {getData} from '@/lib/fetch'
+
+type BookType = {
+  id: string
+  title: string
+  yop: number
+  author: string
+}
 
 export default function Home() {
+  const [selectDelete, setSelectDelete] = useState<undefined|string>()
+  const [books, setBooks] = useState<BookType[]>([])
   const router = useRouter()
 
-  const [selectDelete, setSelectDelete] = useState<undefined|string>()
+  useEffect(() => {
+    getBooks()
+  }, [])
+
+  const getBooks = async () => {
+    try {
+      const res = await getData(`${process.env.apiUrl}/books`)
+      setBooks(res.data || [])
+    } catch (err) {
+      toastError(err)
+    }
+  }
 
   return (
-    <main className="max-w-7xl bg-white w-screen h-screen flex items-center justify-center">
+    <main className="max-w-7xl bg-white w-screen flex justify-center my-20">
       <section className="flex flex-col w-[1080px] bg-slate-400 p-8 rounded-3xl cursor-default">
         <section className="self-end mb-4">
           <Button onClick={() => router.push("/new-book")}><span className="material-symbols-outlined">add</span> Add Book</Button>
@@ -26,46 +48,18 @@ export default function Home() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>1</TableCell>
-              <TableCell>The Pragmatic Programmer</TableCell>
-              <TableCell>1999</TableCell>
-              <TableCell>
-                <Button size="icon" variant="destructive">
-                  <span className="material-symbols-outlined">delete</span>
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2</TableCell>
-              <TableCell>The Clean Coder</TableCell>
-              <TableCell>2011</TableCell>
-              <TableCell>
-                <Button size="icon" variant="destructive">
-                  <span className="material-symbols-outlined">delete</span>
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>3</TableCell>
-              <TableCell>Alex Ferguson: My Autobiography</TableCell>
-              <TableCell>2013</TableCell>
-              <TableCell>
-                <Button size="icon" variant="destructive">
-                  <span className="material-symbols-outlined">delete</span>
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>4</TableCell>
-              <TableCell>Alderamin on the Sky</TableCell>
-              <TableCell>2012</TableCell>
-              <TableCell>
-                <Button size="icon" variant="destructive">
-                  <span className="material-symbols-outlined">delete</span>
-                </Button>
-              </TableCell>
-            </TableRow>
+            {books.map((item, key) =>
+              <TableRow key={item.id}>
+                <TableCell>{key + 1}</TableCell>
+                <TableCell onClick={() => router.push(`/${item.id}`)}>{item.title}</TableCell>
+                <TableCell>{item.yop}</TableCell>
+                <TableCell>
+                  <Button size="icon" variant="destructive">
+                    <span className="material-symbols-outlined">delete</span>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </section>

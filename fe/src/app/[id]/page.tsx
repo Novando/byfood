@@ -8,8 +8,9 @@ import {Input} from '@/components/ui/input'
 import {Button} from '@/components/ui/button'
 import {toastError, toastSuccess} from '@/components/custom-ui/notification'
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
-import {postData} from '@/lib/fetch'
-import {useRouter} from 'next/navigation'
+import {getData, postData, putData} from '@/lib/fetch'
+import {useParams, useRouter} from 'next/navigation'
+import {useEffect} from 'react'
 
 
 const formSchema = z.object({
@@ -20,15 +21,28 @@ const formSchema = z.object({
   isbn: z.string().regex(/^(?:|\d{10}|\d{13})$/)
 })
 export default function NewBook() {
+  const params= useParams()
+  useEffect(() => {
+    getDetail()
+  }, [])
+
+  const getDetail = async () => {
+    try {
+      const res = await getData(`${process.env.apiUrl}/books/${params.id}`)
+      for (let [key, val] of Object.entries(res.data)) {
+        const doc = document.querySelector(`input[name="${key}"]`)
+        if (doc) {
+          // @ts-ignore
+          doc.value = val
+        }
+      }
+    } catch (err) {
+      toastError(err)
+    }
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      yop: "",
-      author: "",
-      page: "",
-      isbn: "",
-    },
   })
 
   const router = useRouter()
@@ -42,7 +56,7 @@ export default function NewBook() {
       isbn: form.getValues('isbn').length < 1 ? undefined : form.getValues('isbn'),
     }
     try {
-      const res = await postData(`${process.env.apiUrl}/books`, payload)
+      const res = await putData(`${process.env.apiUrl}/books/${params.id}`, payload)
       toastSuccess(res)
       router.replace('/')
     } catch (err: any) {
@@ -54,7 +68,7 @@ export default function NewBook() {
     <section className="my-8 min-w-[480px]">
       <Card>
         <CardHeader>
-          <CardTitle>Add new book to the library</CardTitle>
+          <CardTitle>Update a book</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -129,7 +143,7 @@ export default function NewBook() {
                     </div>
                   </FormItem>
                 )}/>
-              <Button type="submit" className="mt-8">Add Book</Button>
+              <Button type="submit" className="mt-8">Update</Button>
             </form>
           </Form>
         </CardContent>
