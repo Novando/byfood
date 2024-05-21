@@ -1,12 +1,15 @@
 # Byfood Assignment Backend Section
 
+
 ## Prerequisite
 - PostgreSQL
 - `make` command on terminal
 - Go version 1.21.6 (or using Go Version Manager)
 
+
 ## How to Run
 - Create a PostgresSQL database
+- Duplicate `./config/.env.example` named `./config/.env.local`, fill the value of the variable accordingly
 - Install the project simply by executing :
 ```bash
 make install
@@ -45,3 +48,7 @@ make build
 - `internal` is a place where all services/modules located. The services/modules will and should be encapsulated
 - `pkg` almost identical with `internal` but all the module/packages should not be encapsulated
 - `scripts` all the shell script for building, deploying, or other related to ops
+
+
+## Sample Working App
+![](https://raw.githubusercontent.com/Novando/byfood/master/images/url-modifier.png)
